@@ -9,7 +9,7 @@ This is the start of a personal project of setting up the internal state of a se
 Description
 ===========
 
-Due to my interest in the game [Secret Hitler](https://www.secrethitler.com/), the intention of this program is to: 
+Due to my interest in the game `Secret Hitler <secrethitler.com>`_, the intention of this program is to: 
 
 * Keep track of the state of the game, that which is public knowledge to all players
 
