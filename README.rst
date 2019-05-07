@@ -15,7 +15,7 @@ Due to my interest in the game [Secret Hitler](https://www.secrethitler.com/), t
 
 * (Eventually) Assess the probabilities of particular players being fascist/liberal
 
-* (Eventually) Attempt to create an A.I. which can play the limited information game (a difficult task) logically
+* (Eventually) Create an A.I. which can play the limited information game (a difficult task)
 
 
 This is mainly just a personal project that I will be developing in my spare time. Feel free to make any suggestions 
