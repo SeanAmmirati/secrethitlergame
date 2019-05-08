@@ -5,7 +5,8 @@ import numpy as np
 
 class SecretHitlerState():
 
-    def __init__(self, possible_lib_cards = 6, n_cards = 15, n_players = 7, n_fasc = 2, names = None):
+    def __init__(self, possible_lib_cards=6, n_cards=15,
+                 n_players=7, n_fasc=2, names=None):
         self.turn = 1
 
         self.possible_liberals = possible_lib_cards
@@ -32,9 +33,11 @@ class SecretHitlerState():
         self.pres_seat = 0
 
         if names is None:
-            self.players = {str(x): SecretHitlerPlayer(str(x), x) for x in range(self.n_players)}
+            self.players = {str(x): SecretHitlerPlayer(str(x), x)
+                            for x in range(self.n_players)}
         else:
-            self.players = {name: SecretHitlerPlayer(name, seat) for seat, name in names.items()}
+            self.players = {name: SecretHitlerPlayer(name, seat)
+                            for seat, name in names.items()}
             assert len(self.players) == n_players
 
     @property
@@ -65,13 +68,16 @@ class SecretHitlerState():
         self.n_fasc_left -= 1
 
     def determine_vote(self, chanc):
-        votes = [player_obj.vote_info[-1]['vote'] for player_obj in self.players.values()]
+        votes = [player_obj.vote_info[-1]['vote']
+                 for player_obj in self.players.values()]
         pct_in_favor = np.mean([vote.upper() == 'JA' for vote in votes])
 
         result_dict = {
                            'turn': self.turn,
-                           'in_favor': [player_obj for player_obj in self.players.values() if player_obj.vote_info[-1]['vote'].upper() == 'JA'],
-                           'against': [player_obj for player_obj in self.players.values() if player_obj.vote_info[-1]['vote'].upper() != 'JA'],
+                           'in_favor': [player_obj for player_obj in self.players.values()
+                                        if player_obj.vote_info[-1]['vote'].upper() == 'JA'],
+                           'against': [player_obj for player_obj in self.players.values()
+                                       if player_obj.vote_info[-1]['vote'].upper() != 'JA'],
                            'pres': self.pres,
                            'chanc': chanc
                            }
@@ -116,17 +122,12 @@ class SecretHitlerState():
 
     def begin_enactment_process(self):
         last_card = self.played_cards[-1]
-        if last_card.upper() == 'L':
-            self.discovered_liberal()
-        elif last_card.upper() == 'F':
-            self.discovered_fasc()
-
-
-
+        self.discovered_card(last_card)
 
 
 class Claim:
-    def __init__(self, turn, claim, role, co_governor, conflict, conflict_claim):
+    def __init__(self, turn, claim, role,
+                 co_governor, conflict, conflict_claim):
         self.turn = turn
         self.claim = claim
         self.role = role
@@ -148,10 +149,12 @@ class Claim:
 
         n_ways_of_getting_liberals = factorial(state.n_liberals_left) / (factorial(state.n_liberals_left - n_liberals) * factorial(n_liberals)) if n_liberals < state.n_liberals_left else 0
         n_ways_of_getting_fasc = factorial(state.n_fasc_left) / (factorial(state.n_fasc_left - n_fascists) * factorial(n_fascists)) if n_fascists < state.n_fasc_left else 0
-        n_pos_draws = factorial(state.cards_in_deck) / (factorial(state.cards_in_deck - 3) * 6)
+        n_pos_draws = factorial(state.cards_in_deck + 2) / (factorial(state.cards_in_deck - 1) * 6)
 
+        import pdb; pdb.set_trace()
         prob = (n_ways_of_getting_liberals * n_ways_of_getting_fasc) / n_pos_draws
         return prob
+
 
 class SecretHitlerPlayer():
 
@@ -212,7 +215,9 @@ class SecretHilter():
     def vote_for_government(self, chanc, votes):
         self.state.pres.appoint(self.state.turn, self.state.players[chanc])
         for voter, vote in votes.items():
-            self.state.players[voter].add_vote(self.state.turn, vote, self.state.pres, self.state.players[chanc])
+            self.state.players[voter].add_vote(
+                self.state.turn, vote,
+                self.state.pres, self.state.players[chanc])
 
         self.state.determine_vote(self.state.players[chanc])
 
@@ -224,21 +229,23 @@ class SecretHilter():
         conf_claim_pres = None if not conflict else chanc_claim
         conf_claim_chanc = None if not conflict else pres_claim
 
-        pres.add_claim(self.state.turn, pres_claim, 'president', chanc, conflict, conf_claim_pres)
-        chanc.add_claim(self.state.turn, chanc_claim, 'chancellor', pres, conflict, conf_claim_chanc)
+        pres.add_claim(self.state.turn, pres_claim, 'president',
+                       chanc, conflict, conf_claim_pres)
+        chanc.add_claim(self.state.turn, chanc_claim, 'chancellor',
+                        pres, conflict, conf_claim_chanc)
 
         self.state.played_cards.append(played_card)
         self.state.after_successful_gov()
 
     def determine_suspicions(self):
-        print({name: player.move_info[-1].probability(self.state) for name, player in self.state.players.items() if len(player.move_info) > 0})
-
-
+        print({name: player.move_info[-1].probability(self.state)
+               for name, player in self.state.players.items()
+               if len(player.move_info) > 0})
 
 
 if __name__ == '__main__':
     sh = SecretHilter()
-    sh.vote_for_government('2', {'0':'Ja', '1':'Nein', '2':'Ja', '3': 'Ja', '4': 'Ja', '5': 'Ja', '6':'Nein'})
+    sh.vote_for_government('2', {'0': 'Ja', '1': 'Nein', '2': 'Ja', '3': 'Ja', '4': 'Ja', '5': 'Ja', '6':'Nein'})
     sh.enact_policy([['L', 'F', 'F'], ['L', 'F']], ['F', 'F'], 'F')
     sh.vote_for_government('4', {'0':'Ja', '1':'Nein', '2':'Ja', '3': 'Ja', '4': 'Ja', '5': 'Ja', '6':'Nein'})
     sh.enact_policy([['L', 'F', 'F'], ['L', 'F']], ['L', 'F'], 'F')
