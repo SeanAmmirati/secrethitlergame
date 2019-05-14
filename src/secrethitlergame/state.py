@@ -1,5 +1,5 @@
 import numpy as np
-from .players import SecretHitlerPlayer
+from secrethitlergame.players import SecretHitlerPlayer
 
 
 class SecretHitlerState():

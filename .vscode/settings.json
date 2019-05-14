@@ -1,0 +1,7 @@
+{
+    "python.testing.pyTestArgs": [],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pyTestEnabled": true,
+    "python.pythonPath": "/home/seanammirati/anaconda3/envs/secrethitler/bin/python"
+}

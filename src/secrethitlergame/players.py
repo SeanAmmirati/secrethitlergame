@@ -1,5 +1,5 @@
 import numpy as np
-from .claim import Claim
+from secrethitlergame.claim import Claim
 
 class SecretHitlerPlayer():
 
