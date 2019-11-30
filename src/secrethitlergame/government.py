@@ -44,7 +44,8 @@ class Government:
             self.votes = []
 
     def passed(self):
-        return sum((v.is_approval() for v in self.votes))/len(self.votes) > .5
+        appgen = (v.is_approval() for v in self.votes)
+        return sum(appgen)/len(self.votes) > .5
 
     def failed(self):
         return not self.passed()
