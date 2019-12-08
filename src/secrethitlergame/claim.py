@@ -1,66 +1,58 @@
-import numpy as np
-from math import factorial
-
-
-class Turn:
-
-    def __init__(self, turn_number=None):
-
-        self.turn_number = turn_number
-
-
-class Claim(list):
-
-    def __init__(self, values):
-        if len(values) > 3:
-            raise ValueError(
-                'Claim must be less than or equal to three values')
-        super().__init__()
-        for v in values:
-            self.append(v)
-
-
-class Chancelor(Player):
-
-    def __init__(self, )
-
-
 class Claim:
-    def __init__(self, turn, claim, role,
-                 co_governor, conflict, conflict_claim):
-        self.turn = turn
-        self.claim = claim
-        self.role = role
-        self.co_governor = co_governor
-        self.conflict = conflict
-        self.conflict_claim = conflict_claim
 
-    def probability(self, state):
-        if len(self.claim) == 0:
-            return np.nan
+    def __init__(self, cards):
+        self.cards = cards
 
-        if isinstance(self.claim[0], list):
-            claim = self.claim[0]
-        else:
-            claim = self.claim
 
-        n_liberals = len([x for x in claim if x.upper() == 'L'])
-        n_fascists = state.cards_drawn_on_gov - n_liberals
+class RecievedClaim(Claim):
 
-        n_ways_of_getting_liberals = factorial(state.n_liberals_left) / (factorial(
-            state.n_liberals_left - n_liberals) * factorial(n_liberals)) if n_liberals < state.n_liberals_left else 0
-        n_ways_of_getting_fasc = factorial(state.n_fasc_left) / (factorial(
-            state.n_fasc_left - n_fascists) * factorial(n_fascists)) if n_fascists < state.n_fasc_left else 0
-        n_pos_draws = factorial(state.cards_in_deck + 3) / \
-            ((factorial(state.cards_in_deck)) * 6)
+    def __init__(self, cards):
+        if len(cards) not in [2, 3]:
+            raise ValueError(
+                'A player will recieve two or three cards regardless. Check the list value.')
+        super().__init__(cards)
 
-        prob = (n_ways_of_getting_liberals *
-                n_ways_of_getting_fasc) / n_pos_draws
-        return prob
+    def __sub__(self, other):
+        if not isinstance(other, DiscardClaim):
+            raise ValueError('Can only subtract recieved and discard claim.')
+
+        c = self.cards.copy()
+        c.remove(other.card)
+        return c
+
+
+class DiscardClaim(Claim):
+
+    def __init__(self, cards):
+        if len(cards) != 1:
+            raise ValueError(
+                'A player must discard exactly one card.')
+        super().__init__(cards)
+        self.card = self.cards[0]
+
+
+class PolicyAction:
+
+    def __init__(self, recieved, discarded):
+        self.recieved = recieved
+        self.discarded = discarded
+
+    def recieved_cards(self):
+        return self.recieved.cards
+
+    def discarded_cards(self):
+        return self.discarded.cards
+
+    def passed_cards(self):
+        return self.recieved - self.discarded
+
+    def enacted_cards(self):
+        passed = self.passed_cards()
+        return passed if len(passed) == 1 else None
 
 
 if __name__ == '__main__':
-    from secrethitlergame.state import SecretHitlerState
-    c = Claim(1, ['F', 'F'], 'chanc', 3, False, None)
-    s = SecretHitlerState()
-    c.probability(s)
+    rc = RecievedClaim([1, 1, 2])
+    dc = DiscardClaim([1])
+    tc = PolicyAction(rc, dc)
+    print(tc.enacted_cards())
