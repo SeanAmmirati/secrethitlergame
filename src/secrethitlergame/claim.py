@@ -1,7 +1,17 @@
+from cards import Card
+
+
 class Claim:
 
     def __init__(self, cards):
         self.cards = cards
+        for card in self.cards:
+            if not isinstance(card, Card) and card is not None:
+                raise TypeError(
+                    'Cards must either be of the card type or None.')
+
+    def is_hidden(self):
+        return any(x is None for x in self.cards)
 
 
 class RecievedClaim(Claim):
@@ -34,6 +44,15 @@ class DiscardClaim(Claim):
 class PolicyAction:
 
     def __init__(self, recieved, discarded):
+
+        if not isinstance(recieved, RecievedClaim):
+            raise TypeError(
+                'Must pass a recieved claim into a policy action class.')
+
+        if not isinstance(discarded, DiscardClaim):
+            raise TypeError(
+                'Must pass a discard claim into a policy action class.')
+
         self.recieved = recieved
         self.discarded = discarded
 
@@ -52,7 +71,7 @@ class PolicyAction:
 
 
 if __name__ == '__main__':
-    rc = RecievedClaim([1, 1, 2])
-    dc = DiscardClaim([1])
+    rc = RecievedClaim([Card('Liberal'), Card('Fascist')])
+    dc = DiscardClaim([Card('Liberal')])
     tc = PolicyAction(rc, dc)
     print(tc.enacted_cards())

@@ -1,5 +1,6 @@
 from phase import Phase
 from voting_phase import VotingPhase
+from card import LiberalCard, FascistCard
 
 
 class EnactmentPhase(Phase):
@@ -21,4 +22,10 @@ class EnactmentPhase(Phase):
         previous_government = self.get_previous_government()
         self.chancelor, self.president = previous_government
 
-    
+    def enact(self, enactment, liberal_space, fascist_space):
+        result = enactment.enacted_policy()
+        if isinstance(result, LiberalCard):
+            self.next_phase = liberal_space
+        elif isinstance(result, FascistCard):
+            self.next_phase = fascist_space
+        return self.next_phase
