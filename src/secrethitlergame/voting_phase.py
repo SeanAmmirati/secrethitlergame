@@ -1,5 +1,5 @@
-from phase import Phase
-from enactment_phase import EnactmentPhase
+from secrethitlergame.phase import Phase
+# from secrethitlergame.enactment_phase import EnactmentPhase
 
 
 class VotingPhase(Phase):
@@ -11,6 +11,7 @@ class VotingPhase(Phase):
 
     def get_previous_government(self):
         p = self
+        
         while p.previous_phase:
             p = p.previous_phase
             if isinstance(p, VotingPhase):
@@ -28,9 +29,9 @@ class VotingPhase(Phase):
     def add_president(self, player):
         self.president = player
 
-    def passed(self):
-        self.next_phase = EnactmentPhase()
-        return self.next_phase
+    # def passed(self):
+    #     self.next_phase = EnactmentPhase()
+    #     return self.next_phase
 
     def failed(self):
         self.next_phase = VotingPhase()

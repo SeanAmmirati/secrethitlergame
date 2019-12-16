@@ -1,5 +1,5 @@
-from phase import Phase
-from enactment_phase import EnactmentPhase
+from secrethitlergame.phase import Phase
+from secrethitlergame.enactment_phase import EnactmentPhase
 
 
 class SpecialPhase(Phase):
@@ -9,15 +9,16 @@ class SpecialPhase(Phase):
         self.player = None
 
     def find_last_president(self):
-        p = self
+        p = self.previous_phase
 
-        while p.previous_phase:
+        while p:
             if isinstance(p, EnactmentPhase):
                 self.player = p.president
                 break
+            p = p.previous_phase
 
         if self.player is None:
-            raise ValueError(
+            raise NotImplementedError(
                 'There have not been any presidents who could have a special action. Is this being called in the correct place?')
 
     def action(self, *args, **kwargs):
@@ -53,10 +54,10 @@ class PeekPlayerPhase(SpecialPhase):
         return self.peek_player(player)
 
 
-class PeekTopDeckPhase(SpecialPhase):
+class PeekDeckPhase(SpecialPhase):
 
-    def peek_topdeck(self, topdeck):
-        self.player.inform_topdeck(topdeck.top(3))
+    def peek_deck(self, deck):
+        self.player.inform_deck(deck.top(3))
 
     def action(self, topdeck):
-        return self.peek_topdeck(topdeck)
+        return self.peek_deck(deck)

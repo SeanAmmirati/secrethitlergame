@@ -1,6 +1,6 @@
-from phase import Phase
-from voting_phase import VotingPhase
-from card import LiberalCard, FascistCard
+from secrethitlergame.phase import Phase
+from secrethitlergame.voting_phase import VotingPhase
+from secrethitlergame.cards import LiberalCard, FascistCard
 
 
 class EnactmentPhase(Phase):
