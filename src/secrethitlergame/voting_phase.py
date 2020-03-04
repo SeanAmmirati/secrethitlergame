@@ -11,7 +11,7 @@ class VotingPhase(Phase):
 
     def get_previous_government(self):
         p = self
-        
+
         while p.previous_phase:
             p = p.previous_phase
             if isinstance(p, VotingPhase):
@@ -22,7 +22,7 @@ class VotingPhase(Phase):
         previous_government = self.get_previous_government()
         if player in previous_government:
             raise ValueError(
-                'Cannot find add chancelor who was in previous government.')
+                'Cannot add chancelor who was in previous government.')
         else:
             self.chancelor = player
 
