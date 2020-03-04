@@ -17,12 +17,16 @@ class TestSpecialPhase:
 
     def test_find_last_president(self):
         sp = SpecialPhase()
+        generic_phase = Phase()
         enactment_phase = EnactmentPhase()
         player = Mock()
         enactment_phase.president = player
         with pytest.raises(NotImplementedError):
             sp.find_last_president()
-        sp.previous_phase = enactment_phase
+
+        sp.previous_phase = generic_phase
+        sp.previous_phase.previous_phase = enactment_phase
+
         sp.find_last_president()
         assert sp.player == player
 
@@ -71,7 +75,7 @@ class TestChooseNextPresidentPhase:
         player = Mock()
         cnpp = ChooseNextPresidentPhase()
         cnpp.choose_next_president = Mock()
-        cnpp.choose_next_president(player)
+        cnpp.action(player)
         cnpp.choose_next_president.assert_called_once_with(player)
 
 
@@ -93,9 +97,9 @@ class TestPeekPlayerPhase:
 
         ppp = PeekPlayerPhase()
         ppp.player = peeking_player
-        ppp.choose_next_player = Mock()
+        ppp.peek_player = Mock()
         ppp.action(peeked_player)
-        ppp.choose_next_player.assert_called_once_with(peeked_player)
+        ppp.peek_player.assert_called_once_with(peeked_player)
 
 
 class TestPeekDeckPhase:
@@ -108,4 +112,15 @@ class TestPeekDeckPhase:
         pdp = PeekDeckPhase()
         pdp.player = player
         pdp.peek_deck(deck)
-        assert player.inform_deck.assert_called_once_with(deck.top(3))
+        player.inform_deck.assert_called_once_with(deck.top(3))
+
+    def test_action(self):
+        peeking_player = Mock()
+        peeking_player.inform_role = Mock()
+        peeked_deck = Mock()
+
+        pdp = PeekDeckPhase()
+        pdp.player = peeking_player
+        pdp.peek_deck = Mock()
+        pdp.action(peeked_deck)
+        pdp.peek_deck.assert_called_once_with(peeked_deck)

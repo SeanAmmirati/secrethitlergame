@@ -60,4 +60,4 @@ class PeekDeckPhase(SpecialPhase):
         self.player.inform_deck(deck.top(3))
 
     def action(self, topdeck):
-        return self.peek_deck(deck)
+        return self.peek_deck(topdeck)
