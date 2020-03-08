@@ -1,4 +1,4 @@
-from cards import Card
+from secrethitlergame.cards import Card
 
 
 class Claim:

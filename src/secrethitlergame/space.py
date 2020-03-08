@@ -1,6 +1,6 @@
-from voting_phase import VotingPhase
-from special_phase import (ExecutionPhase, ChooseNextPresidentPhase,
-                           PeekPlayerPhase, PeekTopDeckPhase)
+from secrethitlergame.voting_phase import VotingPhase
+from secrethitlergame.special_phase import (ExecutionPhase, ChooseNextPresidentPhase,
+                                            PeekPlayerPhase, PeekDeckPhase)
 
 
 class Space:
@@ -38,8 +38,6 @@ class LiberalSpace(Space):
         else:
             raise TypeError(f'Must enter a value of type: {LiberalSpace}')
 
-    pass
-
 
 class ExecutionSpace(FascistSpace):
 
@@ -62,4 +60,4 @@ class PeekPlayerSpace(FascistSpace):
 class PeekTopDeckSpace(FascistSpace):
 
     def next_phase(self):
-        return PeekTopDeckPhase
+        return PeekDeckPhase

@@ -1,14 +1,38 @@
-import space
+import secrethitlergame.space as space
 
 
 class GameBoard:
 
     def __init__(self, max_lib=5, max_fasc=6, max_tracker=3,
                  fascist_space_seq=None, liberal_space_seq=None):
+
+        if fascist_space_seq and max_fasc:
+            Warning(f'''You have specified both a sequence of fascist spaces
+            and a number of maximum fascists. Because the sequence is more specific,
+            the max_fasc attribute will be set to the length of this sequence.
+            If this is not your intention, please respecify the fascist_space_seq.
+
+            To silence this warning, simply set max_fasc to None''')
+
+            max_fasc = len(fascist_space_seq)
+
+        if liberal_space_seq and max_lib:
+            Warning(f'''You have specified both a sequence of liberal spaces
+            and a number of maximum liberals. Because the sequence is more specific,
+            the max_fasc attribute will be set to the length of this sequence.
+            If this is not your intention, please respecify the liberal_space_seq.
+
+            To silence this warning, simply set max_lib to None''')
+
+            max_lib = len(liberal_space_seq)
+
         self.max_lib = max_lib
         self.max_fasc = max_fasc
         self.max_tracker = max_tracker
 
+        # TODO: Change these sequences to lists
+        # Also, ensure that they are called as a list of objects
+        # BEFORE they are used, not called within _generate_spaces.
         if not fascist_space_seq:
             self.fascist_space_seq = {
                 i: space.FascistSpace for i in range(self.max_fasc)
@@ -62,7 +86,7 @@ class GameBoard:
 
     def increment_tracker(self):
         self.cur_tracker += 1
-        if self.cur_tracker == 3:
+        if self.cur_tracker == self.max_tracker:
             self.reset_tracker()
 
 
@@ -78,7 +102,7 @@ class FiveSixPlayerGameBoard(GameBoard):
     }
 
     def __init__(self, max_tracker=3):
-        super().__init__(max_lib=5, max_fasc=6, max_tracker=max_tracker,
+        super().__init__(max_lib=None, max_fasc=None, max_tracker=max_tracker,
                          fascist_space_seq=FiveSixPlayerGameBoard.fascist_space_seq)
 
 
@@ -116,7 +140,7 @@ class NineTenPlayerGameBoard(GameBoard):
 if __name__ == '__main__':
     g = GameBoard()
     print(g.cur_fasc_space)
-    print(g.increment_fascist())
+    g.increment_fascist()
     print(g.cur_fasc_space)
 
     sixplayers = FiveSixPlayerGameBoard()
