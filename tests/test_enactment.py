@@ -21,35 +21,55 @@ def test_enacted_policy(possible_actions_list):
         assert e.enacted_policy() == [action['enacted']]
 
 
+def test_is_conflict(possible_actions_list):
+    for action in possible_actions_list:
+        e = Enactment(action['president_policy'],
+                      action['chancelor_policy'])
+        conflict = action['p_passed'] != action['c_draw']
+
+        assert e.is_conflict() == conflict
+
+
 @pytest.fixture
 def possible_actions_list():
     """ setup any state specific to the execution of the given module."""
 
-    # No conflict, slightly nonsensible
-
     card_types = [LiberalCard, FascistCard]
-    possible_draws = [[Card()
-                       for Card in y]
-                      for y in combinations_with_replacement(card_types, 3)
-                      ]
+    three_card_combos = combinations_with_replacement(card_types, 3)
+    two_card_combos = combinations_with_replacement(card_types, 2)
+
+    possible_draw_claims_pres = [[Card()
+                                  for Card in y]
+                                 for y in three_card_combos
+                                 ]
+
+    possible_draw_claims_chanc = [[Card()
+                                   for Card in y]
+                                  for y in two_card_combos
+                                  ]
 
     possible_actions_list = []
-    for draw in possible_draws:
-        for i in range(len(draw)):
-            possible_discards = draw.copy()
-            discard = possible_discards.pop(i)
-            for j in range(len(possible_discards)):
-                possible_chanc_discards = possible_discards.copy()
-                c_discard = possible_chanc_discards.pop(j)
-                possible_actions_list.append(dict(
-                    president_policy=PolicyAction(
-                        RecievedClaim(draw),
-                        DiscardClaim([discard])
-                    ),
-                    chancelor_policy=PolicyAction(
-                        RecievedClaim(possible_discards),
-                        DiscardClaim([c_discard])
-                    ),
-                    enacted=possible_chanc_discards[0]))
+    for p_draw in possible_draw_claims_pres:
+        for c_draw in possible_draw_claims_chanc:
+            for j in range(len(p_draw)):
+                p_passed = p_draw.copy()
+                p_discard = p_passed.pop(j)
+                for i in range(len(c_draw)):
+                    c_played = c_draw.copy()
+                    c_discard = c_played.pop(i)
+                    c_played = c_played[0]
+                    possible_actions_list.append(dict(
+                        president_policy=PolicyAction(
+                            RecievedClaim(p_draw),
+                            DiscardClaim([p_discard])
+                        ),
+                        chancelor_policy=PolicyAction(
+                            RecievedClaim(c_draw),
+                            DiscardClaim([c_discard])
+                        ),
+                        enacted=c_played,
+                        p_passed=p_passed,
+                        c_draw=c_draw
+                    ))
 
     return possible_actions_list
